@@ -226,6 +226,11 @@ class RuntimeEndpoint(BaseBackend):
             "logprob_start_len": max(prompt_len - 2, 0),
         }
         self._add_images(s, data)
+        if s.images_:  # only support one image
+            # TODO: This is a very naive way to shift the logprob_start_len
+            # maybe in future we should directly modify `prompt_tokens` variable
+            # to take the added image tokens into account
+            data["logprob_start_len"] += 576 - 1
         res = http_request(
             self.base_url + "/generate",
             json=data,
